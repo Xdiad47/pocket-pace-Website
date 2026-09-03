@@ -44,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 
         <footer className="border-t border-card-border">
           <div className="mx-auto max-w-4xl px-6 py-8 text-sm text-neutral">
-            © {new Date().getFullYear()} {siteConfig.appName}. {siteConfig.packageId}
+            © {new Date().getFullYear()} {siteConfig.appName}. A product of Xdiad.io
           </div>
         </footer>
       </body>

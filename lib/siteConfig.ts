@@ -2,7 +2,6 @@
 // every page pulls from here rather than hardcoding legal text inline.
 export const siteConfig = {
   appName: "Pocket Pace",
-  packageId: "io.xdiad.pocketpace",
   // Matches the contact address used on the Scanly privacy/terms pages —
   // confirm this is still the right inbox for Pocket Pace specifically.
   contactEmail: "rohannth94@gmail.com",
