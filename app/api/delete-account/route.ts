@@ -12,8 +12,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing bearer token." }, { status: 401 });
   }
 
-  const adminAuth = getAdminAuth();
-  const adminDb = getAdminDb();
+  let adminAuth: ReturnType<typeof getAdminAuth>;
+  let adminDb: ReturnType<typeof getAdminDb>;
+  try {
+    adminAuth = getAdminAuth();
+    adminDb = getAdminDb();
+  } catch (err) {
+    // Almost always a malformed/missing FIREBASE_* env var — surface that
+    // clearly instead of a bare 500 with no body.
+    console.error("Admin SDK init failed", err);
+    return NextResponse.json({ error: "Server misconfiguration." }, { status: 500 });
+  }
 
   let uid: string;
   try {
