@@ -3,6 +3,7 @@
 import { useEffect, useState, FormEvent } from "react";
 import {
   GoogleAuthProvider,
+  getAdditionalUserInfo,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -10,6 +11,7 @@ import {
   type User,
 } from "firebase/auth";
 import { auth } from "@/lib/firebaseClient";
+import { siteConfig } from "@/lib/siteConfig";
 
 type Status = "checking" | "signedOut" | "signedIn" | "deleting" | "done";
 
@@ -20,6 +22,10 @@ export default function DeleteAccountPage() {
   const [password, setPassword] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Google sign-in auto-creates an account on first use, so a visitor who
+  // never had a Pocket Pace account still "signs in" successfully — this
+  // gates the confirm-delete UI while we check for and clean up that case.
+  const [checkingGoogleAccount, setCheckingGoogleAccount] = useState(false);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (u) => {
@@ -30,10 +36,24 @@ export default function DeleteAccountPage() {
 
   async function handleGoogleSignIn() {
     setError(null);
+    setCheckingGoogleAccount(true);
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
+      if (getAdditionalUserInfo(result)?.isNewUser) {
+        // Nothing existed before this click — delete the empty shell
+        // Firebase just created rather than leave it behind, and say so.
+        const idToken = await result.user.getIdToken();
+        await fetch("/api/delete-account", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${idToken}` },
+        }).catch(() => {});
+        await signOut(auth);
+        setError("No Pocket Pace account found for that Google account — nothing to delete.");
+      }
     } catch {
       setError("Google sign-in failed. Please try again.");
+    } finally {
+      setCheckingGoogleAccount(false);
     }
   }
 
@@ -43,7 +63,10 @@ export default function DeleteAccountPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch {
-      setError("Couldn't sign in with that email and password.");
+      setError(
+        "Couldn't sign in — check your email and password. If you've never " +
+          "created a Pocket Pace account, there's nothing here to delete."
+      );
     }
   }
 
@@ -76,12 +99,30 @@ export default function DeleteAccountPage() {
         This permanently deletes your Pocket Pace account and all data associated with
         it — income, expenses, goals, and AI reports. This cannot be undone.
       </p>
+      <p className="mt-4 rounded-lg border border-card-border bg-card p-4 text-sm text-neutral">
+        Have a Pocket Pace account and want it gone? Sign in below to confirm.{" "}
+        {siteConfig.playStoreUrl ? (
+          <>
+            Don&apos;t have the app yet?{" "}
+            <a className="text-brand underline" href={siteConfig.playStoreUrl}>
+              Get it on Google Play
+            </a>
+            .
+          </>
+        ) : (
+          "If you've never created a Pocket Pace account, there's nothing here to delete."
+        )}
+      </p>
 
       {status === "checking" && (
         <p className="mt-8 text-sm text-neutral">Checking sign-in status…</p>
       )}
 
-      {status === "signedOut" && (
+      {checkingGoogleAccount && (
+        <p className="mt-8 text-sm text-neutral">Checking your account…</p>
+      )}
+
+      {status === "signedOut" && !checkingGoogleAccount && (
         <div className="mt-8 space-y-6">
           <button
             onClick={handleGoogleSignIn}
@@ -123,7 +164,7 @@ export default function DeleteAccountPage() {
         </div>
       )}
 
-      {(status === "signedIn" || status === "deleting") && user && (
+      {(status === "signedIn" || status === "deleting") && user && !checkingGoogleAccount && (
         <div className="mt-8 space-y-6">
           <div className="rounded-lg border border-card-border bg-card p-4 text-sm">
             Signed in as <span className="font-medium">{user.email}</span>.{" "}
