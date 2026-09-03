@@ -59,16 +59,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mt-16 -mx-6 px-6">
-        <div className="flex gap-4 overflow-x-auto pb-2">
-          {screenshots.map((s) => (
+      <section className="mt-16 -mx-6 overflow-hidden">
+        <div className="screenshot-track flex w-max gap-4 px-6">
+          {[...screenshots, ...screenshots].map((s, i) => (
             <div
-              key={s.src}
+              key={`${s.src}-${i}`}
+              aria-hidden={i >= screenshots.length}
               className="relative aspect-[9/20] w-40 shrink-0 overflow-hidden rounded-2xl border border-card-border shadow-sm sm:w-48"
             >
               <Image
                 src={s.src}
-                alt={s.alt}
+                alt={i < screenshots.length ? s.alt : ""}
                 fill
                 sizes="(min-width: 640px) 12rem, 10rem"
                 className="object-cover"

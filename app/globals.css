@@ -52,3 +52,27 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+@keyframes screenshot-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Exactly one duplicated set wide, so the loop point is invisible. */
+    transform: translateX(-50%);
+  }
+}
+
+.screenshot-track {
+  animation: screenshot-marquee 36s linear infinite;
+}
+
+.screenshot-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screenshot-track {
+    animation: none;
+  }
+}
