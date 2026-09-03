@@ -49,11 +49,10 @@ export default function Terms() {
 
       <Section number={3} title="Accounts & Google Sign-In">
         <p>
-          You can sign in with Google or with an email and password. Signing in
-          lets your budget sync across devices and survive a reinstall.
-          You&apos;re responsible for the accuracy of what you enter and for
-          keeping your credentials secure. You must be legally able to enter
-          into these terms to create an account.
+          You sign in with Google. Signing in lets your budget sync across
+          devices and survive a reinstall. You&apos;re responsible for the
+          accuracy of what you enter, and must be legally able to enter into
+          these terms to create an account.
         </p>
       </Section>
 

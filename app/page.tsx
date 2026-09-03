@@ -3,7 +3,7 @@ import { siteConfig } from "@/lib/siteConfig";
 
 const screenshots = [
   { src: "/screenshots/splash.jpg", alt: "App launch screen with the Pocket Pace logo" },
-  { src: "/screenshots/sign-in.jpg", alt: "Sign in with Google or email" },
+  { src: "/screenshots/sign-in.jpg", alt: "Sign in with Google" },
   { src: "/screenshots/salary-setup.jpg", alt: "Setup step 1: enter monthly income" },
   { src: "/screenshots/expenses-setup.jpg", alt: "Setup step 2: add fixed monthly expenses" },
   { src: "/screenshots/goal-setup.jpg", alt: "Setup step 3: set a savings goal" },
@@ -27,7 +27,7 @@ const features = [
   },
   {
     title: "Your numbers, your account",
-    body: "Sign in with Google or email and your budget follows you across devices. Works fully offline, too.",
+    body: "Sign in with Google and your budget follows you across devices. Works fully offline, too.",
   },
 ];
 

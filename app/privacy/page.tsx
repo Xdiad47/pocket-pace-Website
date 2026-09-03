@@ -40,9 +40,8 @@ export default function PrivacyPolicy() {
 
       <Section number={2} title="Information We Collect">
         <p>
-          <strong>Account information.</strong> When you sign in with Google or
-          with an email and password, we receive your email address and display
-          name.
+          <strong>Account information.</strong> When you sign in with Google, we
+          receive your email address and display name.
         </p>
         <p>
           <strong>Financial information you enter.</strong> Salary/income, fixed

@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import {
   GoogleAuthProvider,
   getAdditionalUserInfo,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
   type User,
@@ -18,8 +17,6 @@ type Status = "checking" | "signedOut" | "signedIn" | "deleting" | "done";
 export default function DeleteAccountPage() {
   const [status, setStatus] = useState<Status>("checking");
   const [user, setUser] = useState<User | null>(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Google sign-in auto-creates an account on first use, so a visitor who
@@ -57,19 +54,6 @@ export default function DeleteAccountPage() {
     }
   }
 
-  async function handleEmailSignIn(e: FormEvent) {
-    e.preventDefault();
-    setError(null);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch {
-      setError(
-        "Couldn't sign in — check your email and password. If you've never " +
-          "created a Pocket Pace account, there's nothing here to delete."
-      );
-    }
-  }
-
   async function handleDelete() {
     if (!user) return;
     setError(null);
@@ -100,7 +84,8 @@ export default function DeleteAccountPage() {
         it — income, expenses, goals, and AI reports. This cannot be undone.
       </p>
       <p className="mt-4 rounded-lg border border-card-border bg-card p-4 text-sm text-neutral">
-        Have a Pocket Pace account and want it gone? Sign in below to confirm.{" "}
+        Have a Pocket Pace account and want it gone? Sign in with the same Google
+        account below to confirm.{" "}
         {siteConfig.playStoreUrl ? (
           <>
             Don&apos;t have the app yet?{" "}
@@ -123,44 +108,13 @@ export default function DeleteAccountPage() {
       )}
 
       {status === "signedOut" && !checkingGoogleAccount && (
-        <div className="mt-8 space-y-6">
+        <div className="mt-8">
           <button
             onClick={handleGoogleSignIn}
             className="w-full rounded-lg bg-brand px-4 py-3 font-medium text-brand-contrast"
           >
             Sign in with Google
           </button>
-
-          <div className="flex items-center gap-3 text-sm text-neutral">
-            <div className="h-px flex-1 bg-card-border" />
-            or
-            <div className="h-px flex-1 bg-card-border" />
-          </div>
-
-          <form onSubmit={handleEmailSignIn} className="space-y-3">
-            <input
-              type="email"
-              required
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-card-border bg-card px-4 py-3"
-            />
-            <input
-              type="password"
-              required
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-card-border bg-card px-4 py-3"
-            />
-            <button
-              type="submit"
-              className="w-full rounded-lg border border-brand px-4 py-3 font-medium text-brand"
-            >
-              Sign in with email
-            </button>
-          </form>
         </div>
       )}
 
