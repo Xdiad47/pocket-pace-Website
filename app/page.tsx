@@ -1,4 +1,16 @@
+import Image from "next/image";
 import { siteConfig } from "@/lib/siteConfig";
+
+const screenshots = [
+  { src: "/screenshots/splash.jpg", alt: "App launch screen with the Pocket Pace logo" },
+  { src: "/screenshots/sign-in.jpg", alt: "Sign in with Google or email" },
+  { src: "/screenshots/salary-setup.jpg", alt: "Setup step 1: enter monthly income" },
+  { src: "/screenshots/expenses-setup.jpg", alt: "Setup step 2: add fixed monthly expenses" },
+  { src: "/screenshots/goal-setup.jpg", alt: "Setup step 3: set a savings goal" },
+  { src: "/screenshots/all-set.jpg", alt: "Setup complete, showing the daily safe-to-spend figure" },
+  { src: "/screenshots/dashboard.jpg", alt: "The dashboard, with daily limit, monthly breakdown, and recent expenses" },
+  { src: "/screenshots/daily-expenses.jpg", alt: "Daily expense history with a running grand total" },
+];
 
 const features = [
   {
@@ -47,7 +59,26 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mt-20 grid gap-6 sm:grid-cols-2">
+      <section className="mt-16 -mx-6 px-6">
+        <div className="flex gap-4 overflow-x-auto pb-2">
+          {screenshots.map((s) => (
+            <div
+              key={s.src}
+              className="relative aspect-[9/20] w-40 shrink-0 overflow-hidden rounded-2xl border border-card-border shadow-sm sm:w-48"
+            >
+              <Image
+                src={s.src}
+                alt={s.alt}
+                fill
+                sizes="(min-width: 640px) 12rem, 10rem"
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-16 grid gap-6 sm:grid-cols-2">
         {features.map((f) => (
           <div
             key={f.title}
