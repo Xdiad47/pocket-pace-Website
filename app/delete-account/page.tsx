@@ -5,6 +5,7 @@ import {
   GoogleAuthProvider,
   getAdditionalUserInfo,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
   type User,
@@ -22,7 +23,12 @@ export default function DeleteAccountPage() {
   // Google sign-in auto-creates an account on first use, so a visitor who
   // never had a Pocket Pace account still "signs in" successfully — this
   // gates the confirm-delete UI while we check for and clean up that case.
+  // Email/password sign-in has no equivalent case: signInWithEmailAndPassword
+  // fails outright for an account that doesn't exist, it never creates one.
   const [checkingGoogleAccount, setCheckingGoogleAccount] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   useEffect(() => {
     return onAuthStateChanged(auth, (u) => {
@@ -51,6 +57,21 @@ export default function DeleteAccountPage() {
       setError("Google sign-in failed. Please try again.");
     } finally {
       setCheckingGoogleAccount(false);
+    }
+  }
+
+  async function handleEmailSignIn(e: { preventDefault: () => void }) {
+    e.preventDefault();
+    setError(null);
+    setIsSigningIn(true);
+    try {
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+    } catch {
+      // Firebase's own message here leaks whether an account exists for that
+      // email — deliberately generic, same reasoning as the app's sign-in.
+      setError("Incorrect email or password.");
+    } finally {
+      setIsSigningIn(false);
     }
   }
 
@@ -84,8 +105,8 @@ export default function DeleteAccountPage() {
         it — income, expenses, goals, and AI reports. This cannot be undone.
       </p>
       <p className="mt-4 rounded-lg border border-card-border bg-card p-4 text-sm text-neutral">
-        Have a Pocket Pace account and want it gone? Sign in with the same Google
-        account below to confirm.{" "}
+        Have a Pocket Pace account and want it gone? Sign in below the same way
+        you sign in on the app — Google, or email and password — to confirm.{" "}
         {siteConfig.playStoreUrl ? (
           <>
             Don&apos;t have the app yet?{" "}
@@ -108,13 +129,45 @@ export default function DeleteAccountPage() {
       )}
 
       {status === "signedOut" && !checkingGoogleAccount && (
-        <div className="mt-8">
+        <div className="mt-8 space-y-6">
           <button
             onClick={handleGoogleSignIn}
             className="w-full rounded-lg bg-brand px-4 py-3 font-medium text-brand-contrast"
           >
             Sign in with Google
           </button>
+
+          <div className="flex items-center gap-3 text-xs text-neutral">
+            <div className="h-px flex-1 bg-card-border" />
+            OR
+            <div className="h-px flex-1 bg-card-border" />
+          </div>
+
+          <form onSubmit={handleEmailSignIn} className="space-y-3">
+            <input
+              type="email"
+              required
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-lg border border-card-border bg-card px-4 py-3 text-sm"
+            />
+            <input
+              type="password"
+              required
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-lg border border-card-border bg-card px-4 py-3 text-sm"
+            />
+            <button
+              type="submit"
+              disabled={isSigningIn}
+              className="w-full rounded-lg border border-card-border bg-card px-4 py-3 font-medium disabled:opacity-40"
+            >
+              {isSigningIn ? "Signing in…" : "Sign in with email"}
+            </button>
+          </form>
         </div>
       )}
 
