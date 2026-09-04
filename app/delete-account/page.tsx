@@ -99,14 +99,26 @@ export default function DeleteAccountPage() {
 
   return (
     <div className="mx-auto max-w-md px-6 py-16">
-      <h1 className="text-2xl font-semibold">Delete your account</h1>
+      <h1 className="text-2xl font-semibold">Delete your Pocket Pace account</h1>
       <p className="mt-2 text-neutral">
-        This permanently deletes your Pocket Pace account and all data associated with
-        it — income, expenses, goals, and AI reports. This cannot be undone.
+        Pocket Pace is a product of Xdiad.io. This page permanently deletes your
+        Pocket Pace account and all data tied to it — email, income, expenses,
+        goals, and AI reports.
       </p>
-      <p className="mt-4 rounded-lg border border-card-border bg-card p-4 text-sm text-neutral">
-        Have a Pocket Pace account and want it gone? Sign in below the same way
-        you sign in on the app — Google, or email and password — to confirm.{" "}
+
+      <ol className="mt-4 list-decimal space-y-1 rounded-lg border border-card-border bg-card p-4 pl-8 text-sm text-neutral">
+        <li>Sign in below the same way you sign in on the app — Google, or email and password.</li>
+        <li>Confirm you understand this can&apos;t be undone.</li>
+        <li>Tap &quot;Permanently delete my account.&quot;</li>
+      </ol>
+
+      <p className="mt-4 text-sm text-neutral">
+        <span className="font-medium text-foreground">What happens to your data:</span>{" "}
+        deletion is immediate — your account and everything stored against it
+        (profile, income, expenses, goals, and saved AI reports) are removed
+        from our servers as soon as you confirm. Nothing is retained afterward.
+        Any budget data still saved on your own device is not affected and stays
+        there until you delete the app.{" "}
         {siteConfig.playStoreUrl ? (
           <>
             Don&apos;t have the app yet?{" "}
