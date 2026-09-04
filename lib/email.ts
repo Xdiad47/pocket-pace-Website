@@ -28,10 +28,11 @@ export async function sendOtpEmail(email: string, code: string, purpose: OtpPurp
   const { subject, heading, body } = COPY[purpose];
 
   const { error } = await resend.emails.send({
-    // Resend's shared sender — works without owning/verifying a domain.
-    // Swap for a verified pocketpace.app address later for better
-    // deliverability and branding.
-    from: "Pocket Pace <onboarding@resend.dev>",
+    // Verified with Resend via send.auraplanapp.com (SPF/DKIM/DMARC) —
+    // borrowed from the developer's other app since Pocket Pace doesn't
+    // have its own domain yet. Swap this once it does; nothing else here
+    // needs to change.
+    from: "Pocket Pace <otp@send.auraplanapp.com>",
     to: email,
     subject,
     html: `
